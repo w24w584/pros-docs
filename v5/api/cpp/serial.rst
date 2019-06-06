@@ -10,30 +10,24 @@ Smart Port Serial Communication C API
 
 .. contents:: :local:
 
-Functions
-=========
+pros::Serial
+============
 
-serial_enable
--------------
-
-Enables generic serial on the given port.
-
-.. note::
-   This function must be called before any of the generic serial functions will work.
+Constructor(s)
+--------------
 
 This function uses the following values of ``errno`` when an error state is reached:
 
 - ``EINVAL``  - The given value is not within the range of V5 ports (1-21)
 - ``EACCES`` - Another resource is currently trying to access the port
 
-Analogous to `pros::Serial::enable <../cpp/serial.html#enable>`_.
-
 .. tabs ::
    .. tab :: Prototype
       .. highlight:: c
       ::
 
-        int32_t serial_enable ( uint8_t port )
+        pros::Serial::Serial ( uint8_t port,
+                               int32_t baudrate )
 
    .. tab :: Example
       .. highlight:: c
@@ -42,38 +36,53 @@ Analogous to `pros::Serial::enable <../cpp/serial.html#enable>`_.
         #define GENERIC_COMM_PORT 1
 
         void initialize() {
-          serial_enable(GENERIC_COMM_PORT);
+          pros::Serial serial(GENERIC_COMM_PORT, 115200);
         }
 
+.. tabs ::
+   .. tab :: Prototype
+      .. highlight:: c
+      ::
+
+        pros::Serial::Serial ( uint8_t port )
+
+   .. tab :: Example
+      .. highlight:: c
+      ::
+
+        #define GENERIC_COMM_PORT 1
+
+        void initialize() {
+          pros::Serial serial(GENERIC_COMM_PORT);
+        }
+        
 ============ ===================================================================
  Parameters
 ============ ===================================================================
  port         The V5 port number from 1-21
+ baudrate     The baudrate to run the port at
 ============ ===================================================================
 
-**Returns:** 1 if the operation was successful or ``PROS_ERR`` if the operation failed, setting ``errno``.
+Methods
+-------
 
-----
-
-serial_set_baudrate
--------------------
+set_baudrate
+~~~~~~~~~~~~
 
 Sets the baudrate for the serial port to operate at.
 
 This function uses the following values of ``errno`` when an error state is reached:
 
-- ``EINVAL``  - The given value is not within the range of V5 ports (1-21)
 - ``EACCES`` - Another resource is currently trying to access the port
 
-Analogous to `pros::Serial::set_baudrate <../cpp/serial.html#set-baudrate>`_.
+Analogous to `serial_set_baudrate <../c/serial.html#serial-set-baudrate>`_.
 
 .. tabs ::
    .. tab :: Prototype
       .. highlight:: c
       ::
 
-        int32_t serial_set_baudrate ( uint8_t port,
-                                      int32_t baudrate )
+        int32_t pros::Serial::set_baudrate ( int32_t baudrate )
 
    .. tab :: Example
       .. highlight:: c
@@ -82,14 +91,13 @@ Analogous to `pros::Serial::set_baudrate <../cpp/serial.html#set-baudrate>`_.
         #define GENERIC_COMM_PORT 1
 
         void initialize() {
-          serial_enable(GENERIC_COMM_PORT);
-          serial_set_baudrate(GENERIC_COMM_PORT, 115200);
+          pros::Serial serial(GENERIC_COMM_PORT);
+          serial.set_baudrate(115200);
         }
 
 ============ ===================================================================
  Parameters
 ============ ===================================================================
- port         The V5 port number from 1-21
  baudrate     The baudrate to operate at
 ============ ===================================================================
 
@@ -97,8 +105,8 @@ Analogous to `pros::Serial::set_baudrate <../cpp/serial.html#set-baudrate>`_.
 
 ----
 
-serial_flush
-------------
+flush
+~~~~~
 
 Clears the internal input and output FIFO buffers.
 
@@ -114,17 +122,16 @@ buffer.
 
 This function uses the following values of ``errno`` when an error state is reached:
 
-- ``EINVAL``  - The given value is not within the range of V5 ports (1-21)
 - ``EACCES`` - Another resource is currently trying to access the port
 
-Analogous to `pros::Serial::flush <../cpp/serial.html#flush>`_.
+Analogous to `serial_flush <../c/serial.html#serial-flush>`_.
 
 .. tabs ::
    .. tab :: Prototype
       .. highlight:: c
       ::
 
-        int32_t serial_flush ( uint8_t port )
+        int32_t pros::Serial::flush ( )
 
    .. tab :: Example
       .. highlight:: c
@@ -133,22 +140,16 @@ Analogous to `pros::Serial::flush <../cpp/serial.html#flush>`_.
         #define GENERIC_COMM_PORT 1
 
         void initialize() {
-          serial_enable(GENERIC_COMM_PORT);
-          serial_flush(GENERIC_COMM_PORT);
+          pros::Serial serial(GENERIC_COMM_PORT);
+          serial.flush();
         }
-
-============ ===================================================================
- Parameters
-============ ===================================================================
- port         The V5 port number from 1-21
-============ ===================================================================
 
 **Returns:** 1 if the operation was successful or ``PROS_ERR`` if the operation failed, setting ``errno``.
 
 ----
 
-serial_get_read_avail
----------------------
+get_read_avail
+~~~~~~~~~~~~~~
 
 Returns the number of bytes available to be read in the the port's FIFO
 input buffer.
@@ -159,17 +160,16 @@ input buffer.
 
 This function uses the following values of ``errno`` when an error state is reached:
 
-- ``EINVAL``  - The given value is not within the range of V5 ports (1-21)
 - ``EACCES`` - Another resource is currently trying to access the port
 
-Analogous to `pros::Serial::get_read_avail <../cpp/serial.html#get-read-avail>`_.
+Analogous to `serial_get_read_avail <../c/serial.html#serial-get-read-avail>`_.
 
 .. tabs ::
    .. tab :: Prototype
       .. highlight:: c
       ::
 
-        int32_t serial_get_read_avail ( uint8_t port )
+        int32_t pros::Serial::get_read_avail ( )
 
    .. tab :: Example
       .. highlight:: c
@@ -178,22 +178,16 @@ Analogous to `pros::Serial::get_read_avail <../cpp/serial.html#get-read-avail>`_
         #define GENERIC_COMM_PORT 1
 
         void initialize() {
-          serial_enable(GENERIC_COMM_PORT);
-          printf("Available bytes to read: %d\n", serial_get_read_avail(GENERIC_COMM_PORT));
+          pros::Serial serial(GENERIC_COMM_PORT);
+          printf("Available bytes to read: %d\n", serial.get_read_avail());
         }
-
-============ ===================================================================
- Parameters
-============ ===================================================================
- port         The V5 port number from 1-21
-============ ===================================================================
 
 **Returns:** The number of bytes available to be read or PROS_ERR if the operation failed, setting errno.
 
 ----
 
-serial_get_write_free
----------------------
+get_write_free
+~~~~~~~~~~~~~~
 
 Returns the number of bytes free in the port's FIFO output buffer.
 
@@ -203,17 +197,16 @@ Returns the number of bytes free in the port's FIFO output buffer.
 
 This function uses the following values of ``errno`` when an error state is reached:
 
-- ``EINVAL``  - The given value is not within the range of V5 ports (1-21)
 - ``EACCES`` - Another resource is currently trying to access the port
 
-Analogous to `pros::Serial::get_write_free <../cpp/serial.html#get-write-free>`_.
+Analogous to `serial_get_write_free <../c/serial.html#serial-get-write-free>`_.
 
 .. tabs ::
    .. tab :: Prototype
       .. highlight:: c
       ::
 
-        int32_t serial_get_write_free ( uint8_t port )
+        int32_t pros::Serial::get_write_free ( )
 
    .. tab :: Example
       .. highlight:: c
@@ -222,39 +215,32 @@ Analogous to `pros::Serial::get_write_free <../cpp/serial.html#get-write-free>`_
         #define GENERIC_COMM_PORT 1
 
         void initialize() {
-          serial_enable(GENERIC_COMM_PORT);
-          printf("Available bytes to write: %d\n", serial_get_write_free(GENERIC_COMM_PORT));
+          pros::Serial serial(GENERIC_COMM_PORT);
+          printf("Available bytes to write: %d\n", serial.get_write_free());
         }
-
-============ ===================================================================
- Parameters
-============ ===================================================================
- port         The V5 port number from 1-21
-============ ===================================================================
 
 **Returns:** The number of bytes free or PROS_ERR if the operation failed,
 setting errno.
 
 ----
 
-serial_peek_byte
-----------------
+peek_byte
+~~~~~~~~~
 
 Reads the next byte available in the port's input buffer without removing it.
 
 This function uses the following values of ``errno`` when an error state is reached:
 
-- ``EINVAL``  - The given value is not within the range of V5 ports (1-21)
 - ``EACCES`` - Another resource is currently trying to access the port
 
-Analogous to `pros::Serial::peek_byte <../cpp/serial.html#peek_byte>`_.
+Analogous to `serial_peek_byte <../c/serial.html#serial-peek_byte>`_.
 
 .. tabs ::
    .. tab :: Prototype
       .. highlight:: c
       ::
 
-        int32_t serial_peek_byte ( uint8_t port )
+        int32_t serial_peek_byte ( )
 
    .. tab :: Example
       .. highlight:: c
@@ -263,39 +249,32 @@ Analogous to `pros::Serial::peek_byte <../cpp/serial.html#peek_byte>`_.
         #define GENERIC_COMM_PORT 1
 
         void initialize() {
-          serial_enable(GENERIC_COMM_PORT);
-          printf("Next byte available: %d\n", serial_peek_byte(GENERIC_COMM_PORT));
+          pros::Serial serial(GENERIC_COMM_PORT);
+          printf("Next byte available: %d\n", serial.peek_byte());
         }
-
-============ ===================================================================
- Parameters
-============ ===================================================================
- port         The V5 port number from 1-21
-============ ===================================================================
 
 **Returns:** The next byte available to be read, -1 if none are available, or
 PROS_ERR if the operation failed, setting errno.
 
 ----
 
-serial_read_byte
-----------------
+read_byte
+~~~~~~~~~
 
 Reads the next byte available in the port's input buffer.
 
 This function uses the following values of ``errno`` when an error state is reached:
 
-- ``EINVAL``  - The given value is not within the range of V5 ports (1-21)
 - ``EACCES`` - Another resource is currently trying to access the port
 
-Analogous to `pros::Serial::read_byte <../cpp/serial.html#read_byte>`_.
+Analogous to `serial_read_byte <../c/serial.html#serial-read_byte>`_.
 
 .. tabs ::
    .. tab :: Prototype
       .. highlight:: c
       ::
 
-        int32_t serial_read_byte ( uint8_t port )
+        int32_t serial_read_byte ( )
 
    .. tab :: Example
       .. highlight:: c
@@ -304,23 +283,17 @@ Analogous to `pros::Serial::read_byte <../cpp/serial.html#read_byte>`_.
         #define GENERIC_COMM_PORT 1
 
         void initialize() {
-          serial_enable(GENERIC_COMM_PORT);
-          printf("Next byte available: %d\n", serial_read_byte(GENERIC_COMM_PORT));
+          pros::Serial serial(GENERIC_COMM_PORT);
+          printf("Next byte available: %d\n", serial.read_byte());
         }
-
-============ ===================================================================
- Parameters
-============ ===================================================================
- port         The V5 port number from 1-21
-============ ===================================================================
 
 **Returns:** The next byte available to be read, -1 if none are available, or
 PROS_ERR if the operation failed, setting errno.
 
 ----
 
-serial_read
------------
+read
+~~~~
 
 Reads up to the next length bytes from the port's input buffer and places
 them in the user supplied buffer.
@@ -331,19 +304,17 @@ them in the user supplied buffer.
 
 This function uses the following values of ``errno`` when an error state is reached:
 
-- ``EINVAL``  - The given value is not within the range of V5 ports (1-21)
 - ``EACCES`` - Another resource is currently trying to access the port
 
-Analogous to `pros::Serial::read <../cpp/serial.html#read>`_.
+Analogous to `serial_read <../c/serial.html#serial-read>`_.
 
 .. tabs ::
    .. tab :: Prototype
       .. highlight:: c
       ::
 
-        int32_t serial_read ( uint8_t port,
-                              uint8_t* buffer,
-                              int32_t length )
+        int32_t pros::Serial::read ( uint8_t* buffer,
+                                     int32_t length )
 
    .. tab :: Example
       .. highlight:: c
@@ -352,15 +323,14 @@ Analogous to `pros::Serial::read <../cpp/serial.html#read>`_.
         #define GENERIC_COMM_PORT 1
 
         void initialize() {
-          serial_enable(GENERIC_COMM_PORT);
+          pros::Serial serial(GENERIC_COMM_PORT);
           char[10] buf;
-          serial_read(GENERIC_COMM_PORT, buf, sizeof(buf));
+          serial.read(buf, sizeof(buf));
         }
 
 ============ ===================================================================
  Parameters
 ============ ===================================================================
- port         The V5 port number from 1-21
  buffer       The location to put the data read
  length       The maximum number of bytes to read
 ============ ===================================================================
@@ -369,8 +339,8 @@ Analogous to `pros::Serial::read <../cpp/serial.html#read>`_.
 
 ----
 
-serial_write_byte
------------------
+write_byte
+~~~~~~~~~~
 
 Write the given byte to the port's output buffer.
 
@@ -380,19 +350,17 @@ Write the given byte to the port's output buffer.
 
 This function uses the following values of ``errno`` when an error state is reached:
 
-- ``EINVAL``  - The given value is not within the range of V5 ports (1-21)
 - ``EACCES`` - Another resource is currently trying to access the port
 - ``EIO`` - Serious internal write error.
 
-Analogous to `pros::Serial::write_byte <../cpp/serial.html#write_byte>`_.
+Analogous to `serial_write_byte <../c/serial.html#serial-write_byte>`_.
 
 .. tabs ::
    .. tab :: Prototype
       .. highlight:: c
       ::
 
-        int32_t serial_write_byte ( uint8_t port,
-                                    uint8_t buffer )
+        int32_t pros::Serial::write_byte ( uint8_t buffer )
 
    .. tab :: Example
       .. highlight:: c
@@ -401,15 +369,14 @@ Analogous to `pros::Serial::write_byte <../cpp/serial.html#write_byte>`_.
         #define GENERIC_COMM_PORT 1
 
         void initialize() {
-          serial_enable(GENERIC_COMM_PORT);
+          pros::Serial serial(GENERIC_COMM_PORT);
           char to_write = 0x80;
-          serial_write_byte(GENERIC_COMM_PORT, to_write);
+          serial_=.write_byte(to_write);
         }
 
 ============ ===================================================================
  Parameters
 ============ ===================================================================
- port         The V5 port number from 1-21
  buffer       The byte to write
 ============ ===================================================================
 
@@ -418,8 +385,8 @@ setting errno.
 
 ----
 
-serial_write
-------------
+write
+~~~~~
 
 Writes up to length bytes from the user supplied buffer to the port's output
 buffer.
@@ -430,19 +397,17 @@ buffer.
 
 This function uses the following values of ``errno`` when an error state is reached:
 
-- ``EINVAL``  - The given value is not within the range of V5 ports (1-21)
 - ``EACCES`` - Another resource is currently trying to access the port
 - ``EIO`` - Serious internal write error.
 
-Analogous to `pros::Serial::write <../cpp/serial.html#write>`_.
+Analogous to `serial_write <../c/serial.html#serial-write>`_.
 
 .. tabs ::
    .. tab :: Prototype
       .. highlight:: c
       ::
 
-        int32_t serial_write ( uint8_t port,
-                               uint8_t* buffer,
+        int32_t serial_write ( uint8_t* buffer,
                                int32_t length)
 
    .. tab :: Example
@@ -452,17 +417,16 @@ Analogous to `pros::Serial::write <../cpp/serial.html#write>`_.
         #define GENERIC_COMM_PORT 1
 
         void initialize() {
-          serial_enable(GENERIC_COMM_PORT);
+          pros::Serial serial(GENERIC_COMM_PORT);
           char[10] buf;
           char to_write = 0x80;
           buf[0] = to_write;
-          serial_write(GENERIC_COMM_PORT, buf, sizeof(buf));
+          serial.write(buf, sizeof(buf));
         }
 
 ============ ===================================================================
  Parameters
 ============ ===================================================================
- port         The V5 port number from 1-21
  buffer       The data to write
  length       The maximum number of bytes to write
 ============ ===================================================================
